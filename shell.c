@@ -48,6 +48,10 @@ void getInput(char *inputStr){
     int numTokens;
     printf("%s", "> ");
     inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
+    // exits on EOF
+    if(inputStr == NULL){
+        exit(0);
+    }
 }
 
 int tokenize(char *input, char ***tokenVector){
