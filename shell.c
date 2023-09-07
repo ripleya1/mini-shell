@@ -11,48 +11,72 @@ int main(){
     
     getInput(inputStr);
 
-    char ***tokenVect;
-    tokenVect = malloc(sizeof(char**) * 200 * 200);
-    int tokenCount;
+    char ***tokenv;
+    tokenv = malloc(sizeof(char**) * 200 * 200);
+    int tokenc;
 
-    tokenCount = tokenize(inputStr, tokenVect);
+    tokenc = tokenize(inputStr, tokenv);
+
+    int pid;
+    pid = fork();
+    // child
+    if(pid == 0){
+        int execErrCode;
+        char *pathFromTok;
+        pathFromTok = tokenv[0];
+        // rewrite token array
+        for(int i = 1; i < tokenc; i++){
+            tokenv[i - 1] = tokenv[i];
+        }
+        // exec
+        execErrCode = execv(pathFromTok, tokenv);
+        if(execErrCode == -1){
+            perror("Invalid command");
+            exit(0);
+        }
+    }
+    // parent
+    else{
+        wait(NULL);
+    }
 }
 
 void getInput(char *inputStr){
     int cont = TRUE;
     while(cont){
-        cont = FALSE;
         printf("%s", "> ");
         inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
-        if(inputStr == NULL){
-            printf("%s", "Invalid input.");
+        // TODO: When the user types a blank line just ignore it and print another prompt.
+        if(inputStr[0] == '\0'){
             cont = TRUE;
         }
-        printf("%s", "\n");
+        else{
+            cont = FALSE;
+        }
     }
 }
 
-int tokenize(char *input, char ***token_vector){
+int tokenize(char *input, char ***tokenVector){
     char *whitespace = " \t\f\r\v\n";
     int c = 0;
     
     // tokenize each token and put into 2d array
     char *tokenizedStr = strtok(input, whitespace);
-    // puts(tokenizedStr);
-    token_vector[0] = tokenizedStr;
-    // puts(tokenVect[0]);
     while(tokenizedStr != NULL){
-        token_vector[c] = tokenizedStr;
+        tokenVector[c] = tokenizedStr;
         c = c + 1;
         tokenizedStr = strtok(NULL, whitespace);
     }
-    // shit breaks weirdly if I do this
-    // free(input);
 
     int i = 0;
-    while(token_vector[i] != NULL){
-        puts(token_vector[i]);
+    while(tokenVector[i] != NULL){
+        // printing for debugging
+        // puts(tokenVector[i]);
         i++;
     }
     return i; // returns the number of tokens
 }
+
+// void itsForkinTime(){
+    
+// }
