@@ -7,28 +7,31 @@
 
 int main(){
     char *inputStr;
-    int *numTokens;
-    char *tokenVect[200];
-    int cont = TRUE;
-    while(cont){
-        getInput(inputStr, &numTokens, &tokenVect);
-        tokenize(, );
-    }
-}
-
-char *getInput(char *inputStr, int *numTokens, char *tokenVect){
     inputStr = malloc(200 * sizeof(char));
+    int *numTokens;
+    char ***tokenVect;
+    tokenVect = malloc(sizeof(char**) * 200 * 200);
+    int c = 0;
+    int cont = TRUE;
     char *whitespace = " \t\f\r\v\n";
-    printf("%s", "> ");
-    inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
+    while(cont){
+        cont = FALSE;
+        printf("%s", "> ");
+        inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
+        char *tokenizedStr = strtok(inputStr, whitespace);
+        // tokenize each token
+        while(tokenizedStr != NULL){
+            tokenVect[c] = tokenizedStr;
+            c++;
+            tokenizedStr = strtok(inputStr, whitespace);
+        }
+    }
+    free(inputStr);
 
-}
-
-char* tokenize(char *input, int *token_count, char ***token_vector){
-    // tokenize
-    char *tokenizedStr = strtok(input, whitespace);
-    while(tokenizedStr != NULL){
-        printf("%s", tokenizedStr);
-        tokenizedStr = strtok(NULL, whitespace); // get next token
+    int i = 0;
+    int j = 0;
+    while(tokenVect[i] != NULL){
+        printf("%s ", tokenVect[0]);
+        i++;
     }
 }
