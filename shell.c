@@ -6,54 +6,48 @@
 #include "shell.h"
 
 int main(){
-    char *inputStr;
-    inputStr = malloc(200 * sizeof(char)); // TODO: change size
-    
-    getInput(inputStr);
+    int cont = TRUE;
+    while(cont){
+        char *inputStr;
+        inputStr = malloc(200 * sizeof(char)); // TODO: change size
+        
+        getInput(inputStr);
 
-    char ***tokenv;
-    tokenv = malloc(sizeof(char**) * 200 * 200);
-    int tokenc;
+        char ***tokenv;
+        tokenv = malloc(sizeof(char**) * 200 * 200);
+        int tokenc;
 
-    tokenc = tokenize(inputStr, tokenv);
+        tokenc = tokenize(inputStr, tokenv);
 
-    int pid;
-    pid = fork();
-    // child
-    if(pid == 0){
-        int execErrCode;
-        char *pathFromTok;
-        pathFromTok = tokenv[0];
-        // rewrite token array
-        for(int i = 1; i < tokenc; i++){
-            tokenv[i - 1] = tokenv[i];
+        int pid;
+        pid = fork();
+        // child
+        if(pid == 0){
+            int execErrCode;
+            char *pathFromTok;
+            pathFromTok = tokenv[0];
+            // rewrite token array
+            for(int i = 1; i < tokenc; i++){
+                tokenv[i - 1] = tokenv[i];
+            }
+            // child executes command, exits if invalid
+            execErrCode = execvp(pathFromTok, tokenv);
+            if(execErrCode == -1){
+                perror("Invalid command");
+                exit(0);
+            }
         }
-        // exec
-        execErrCode = execv(pathFromTok, tokenv);
-        if(execErrCode == -1){
-            perror("Invalid command");
-            exit(0);
+        // parent
+        else{
+            wait(NULL); // parent waits
         }
-    }
-    // parent
-    else{
-        wait(NULL);
     }
 }
 
 void getInput(char *inputStr){
-    int cont = TRUE;
-    while(cont){
-        printf("%s", "> ");
-        inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
-        // TODO: When the user types a blank line just ignore it and print another prompt.
-        if(inputStr[0] == '\0'){
-            cont = TRUE;
-        }
-        else{
-            cont = FALSE;
-        }
-    }
+    int numTokens;
+    printf("%s", "> ");
+    inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
 }
 
 int tokenize(char *input, char ***tokenVector){
@@ -76,7 +70,3 @@ int tokenize(char *input, char ***tokenVector){
     }
     return i; // returns the number of tokens
 }
-
-// void itsForkinTime(){
-    
-// }
