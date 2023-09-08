@@ -5,16 +5,18 @@
 #include <string.h> 
 #include "shell.h"
 
+const int INPUTSIZE = 1000;
+
 int main(){
     int cont = TRUE;
     while(cont){
         char *inputStr;
-        inputStr = malloc(200 * sizeof(char)); // TODO: change size
+        inputStr = malloc(INPUTSIZE * sizeof(char)); // TODO: change size
         
         getInput(inputStr);
 
         char ***tokenv;
-        tokenv = malloc(sizeof(char**) * 200 * 200);
+        tokenv = malloc(sizeof(char**) * INPUTSIZE * INPUTSIZE);
         int tokenc;
 
         tokenc = tokenize(inputStr, tokenv);
@@ -47,7 +49,7 @@ int main(){
 void getInput(char *inputStr){
     int numTokens;
     printf("%s", "> ");
-    inputStr = fgets(inputStr, 200 * sizeof(char), stdin); // get user input
+    inputStr = fgets(inputStr, INPUTSIZE * sizeof(char), stdin); // get user input
     // exits on EOF
     if(inputStr == NULL){
         exit(0);
