@@ -5,13 +5,16 @@
 #include <string.h> 
 #include "shell.h"
 
+// chdir when cd in first arg
+// exit when exit in first arg
+
 const int INPUTSIZE = 1000;
 
 int main(){
     int cont = TRUE;
     while(cont){
         char *inputStr;
-        inputStr = malloc(INPUTSIZE * sizeof(char)); // TODO: change size
+        inputStr = malloc(INPUTSIZE * sizeof(char));
         
         getInput(inputStr);
 
@@ -25,19 +28,34 @@ int main(){
         pid = fork();
         // child
         if(pid == 0){
-            int execErrCode;
+            int execErr;
             char *pathFromTok;
             pathFromTok = tokenv[0];
             // rewrite token array
             for(int i = 1; i < tokenc; i++){
                 tokenv[i - 1] = tokenv[i];
             }
-            // child executes command, exits if invalid
-            execErrCode = execvp(pathFromTok, tokenv);
-            if(execErrCode == -1){
-                perror("Invalid command");
-                exit(0);
-            }
+            // if(strcmp(pathFromTok, "exit") == 0){
+            //     puts("aaa");
+            //     exit(0);
+            //     cont = FALSE;
+            //     break;
+            // }
+            // else if(strcmp(pathFromTok, "cd")){
+            //     int chdirErr;
+            //     chdirErr = chdir();
+            //     if(chdirErr != 0){
+            //         perror("cd failed");
+            //     }
+            // }
+            // else{
+                // child executes command, exits if invalid
+                execErr = execvp(pathFromTok, tokenv);
+                if(execErr == -1){
+                    perror("Invalid command");
+                    exit(0);
+                }
+            // }
         }
         // parent
         else{
@@ -50,7 +68,7 @@ void getInput(char *inputStr){
     int numTokens;
     printf("%s", "> ");
     inputStr = fgets(inputStr, INPUTSIZE * sizeof(char), stdin); // get user input
-    // exits on EOF
+    // exits on EOF (Ctrl + D)
     if(inputStr == NULL){
         exit(0);
     }
