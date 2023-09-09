@@ -1,14 +1,15 @@
-// https://canvas.xavier.edu/courses/84094/assignments/1039002
+/*
+Aaron Ripley
+9/9/23
+A mini shell.
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
 #include "shell.h"
 
-// chdir when cd in first arg
-// exit when exit in first arg
-
-const int INPUTSIZE = 1000;
+const int INPUTSIZE = 1000; // constant for the max length of all inputs
 
 int main(){
     int cont = TRUE;
@@ -26,6 +27,7 @@ int main(){
 
         int pid;
         pid = fork();
+
         // child
         if(pid == 0){
             int execErr;
@@ -35,28 +37,14 @@ int main(){
             for(int i = 1; i < tokenc; i++){
                 tokenv[i - 1] = tokenv[i];
             }
-            // if(strcmp(pathFromTok, "exit") == 0){
-            //     puts("aaa");
-            //     exit(0);
-            //     cont = FALSE;
-            //     break;
-            // }
-            // else if(strcmp(pathFromTok, "cd")){
-            //     int chdirErr;
-            //     chdirErr = chdir();
-            //     if(chdirErr != 0){
-            //         perror("cd failed");
-            //     }
-            // }
-            // else{
-                // child executes command, exits if invalid
-                execErr = execvp(pathFromTok, tokenv);
-                if(execErr == -1){
-                    perror("Invalid command");
-                    exit(0);
-                }
-            // }
+            // child executes command, exits if invalid
+            execErr = execvp(pathFromTok, tokenv);
+            if(execErr == -1){
+                perror("Invalid command");
+                exit(0);
+            }
         }
+
         // parent
         else{
             wait(NULL); // parent waits
